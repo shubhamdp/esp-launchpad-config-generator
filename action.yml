@@ -1,0 +1,40 @@
+name: 'Launchpad config generator'
+
+description: 'Generate launchpad config based on files in the directory'
+
+inputs:
+  owner:
+    description: 'Repository owner'
+    required: true
+    default: "espressif"
+  repo:
+    description: 'Repository name'
+    required: true
+    default: "esp-matter"
+
+outputs:
+  launchpad-config:
+    description: 'launchpad toml configuration'
+
+runs:
+  using: 'python'
+  steps:
+    - name: checkout repo
+      uses: 'actions/checkout@v3'
+
+    - name: set up python
+      uses: 'actions/setup-python@v4'
+      with:
+        python-version: '3.9'
+
+    - run: python -m pip install -r requirements.txt
+
+    # - name: downlaod artifacts
+    #   uses: 'actions/download-artifact@v3'
+    #   with:
+    #     name: artifacts
+
+    - name: generate launchpad config
+      id: generate-launchpad
+      run: |
+        python3 launchpad_config_generator.py ${{ inputs.owner }} ${{ inputs.repo }}
